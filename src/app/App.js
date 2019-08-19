@@ -56,24 +56,24 @@ const App = () => {
 
   const createOrUpdateItem = item => {
     const storageData = getStorageData('data');
+    let sortedData = [];
+    let newItem = item;
     if (selectedItem) {
       const filteredData = storageData.filter(v => v.id !== item.id);
-      const sortedData = sortByField([...filteredData, item], 'id');
-      setSelectedItem(item);
-      setStorageData(sortedData);
-      setData(sortedData);
+      sortedData = sortByField([...filteredData, item], 'id');
     } else {
-      storageData.push({
+      newItem = {
         id: storageData.length,
         visited: false,
         zoom: defaultZoom,
         ...position,
         ...item,
-      });
-      setStorageData(storageData);
-      setData(storageData);
+      }
+      sortedData = sortByField([...storageData], newItem)
     }
-    console.log('item', item);
+    setSelectedItem(newItem);
+    setStorageData(sortedData);
+    setData(sortedData);
   };
 
   const filterData = () => {
