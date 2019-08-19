@@ -27,10 +27,12 @@ const App = () => {
   };
 
   const initializePageData = () => {
-    if (!getStorageData('data')) {
+    const data = () => getStorageData('data')
+    if (!data()) {
       setStorageData(mockData, 'data');
     }
-    setData(getStorageData('data'));
+    setData(data());
+    setSelectedItem(data()[0]);
   };
 
   const toggleItem = index => {
