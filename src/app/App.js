@@ -73,7 +73,7 @@ const App = () => {
     }
     setSelectedItem(newItem);
     setStorageData(sortedData);
-    setData(sortedData);
+    filterData();
   };
 
   const filterData = () => {
