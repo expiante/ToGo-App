@@ -114,8 +114,8 @@ const App = () => {
           )}
         </div>
         <div className='col-4 p-0'>
-          <div className='card'>
-            <div className='card-body vh-100 d-flex flex-fill flex-column'>
+          <div className='bg-white'>
+            <div className='card-body border-0 vh-100 d-flex flex-fill flex-column'>
               <div>
                 <div className='input-group mb-3'>
                   <Input placeholder='Search...' onChange={e => setSearchText(e.target.value)} />
