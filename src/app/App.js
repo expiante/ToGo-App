@@ -69,7 +69,7 @@ const App = () => {
         ...position,
         ...item,
       }
-      sortedData = sortByField([...storageData], newItem)
+      sortedData = sortByField([...storageData, newItem], 'id')
     }
     setSelectedItem(newItem);
     setStorageData(sortedData);
