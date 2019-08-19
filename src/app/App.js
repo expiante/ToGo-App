@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { sortByField, duplicate, filterById } from 'shared/utils/helper';
 import { Input } from 'shared/components';
 import { Map, List } from './components';
-import { getStorageData, setStorageData, initializeStorageData } from './actions';
+import { getStorageData, setStorageData, updateStorageData, removeStorageData } from './actions';
 import { mapConfig } from 'config/consts';
+import { mockData } from 'config/consts';
 
-const { defaultPosition } = mapConfig;
+const { defaultPosition, defaultZoom } = mapConfig;
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -27,16 +28,17 @@ const App = () => {
 
   const initializePageData = () => {
     if (!getStorageData('data')) {
-      initializeStorageData();
+      setStorageData(mockData, 'data');
     }
     setData(getStorageData('data'));
   };
 
   const toggleItem = index => {
     const newData = duplicate(data);
-    newData[index].visited = !newData[index].visited;
-    setSelectedItem(newData[index]);
-    setStorageData(newData);
+    const item = newData[index];
+    item.visited = !item.visited;
+    updateStorageData(item);
+    setSelectedItem(item);
     setData(newData);
   };
 
@@ -48,7 +50,7 @@ const App = () => {
         setSelectedItem(filteredData[0]);
       }
     }
-    setStorageData(filterById(getStorageData('data'), item));
+    removeStorageData(item);
     setData(filteredData);
   };
 
@@ -64,13 +66,14 @@ const App = () => {
       storageData.push({
         id: storageData.length,
         visited: false,
-        text: item.text,
-        zoom: 12,
+        zoom: defaultZoom,
         ...position,
+        ...item,
       });
       setStorageData(storageData);
       setData(storageData);
     }
+    console.log('item', item);
   };
 
   const filterData = () => {

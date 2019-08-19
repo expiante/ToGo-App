@@ -7,6 +7,7 @@ export const mapConfig = {
   ver: '3.exp',
   libs: ['geometry', 'drawing', 'places'],
   defaultPosition: { lat: 40.181169, lng: 44.5133 }, // Yerevan
+  defaultZoom: 12,
   config: {
     disableDefaultUI: false,
     draggable: true,
