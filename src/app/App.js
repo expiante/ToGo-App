@@ -59,15 +59,15 @@ const App = () => {
     let sortedData = [];
     let newItem = item;
     if (selectedItem) {
-      const filteredData = storageData.filter(v => v.id !== item.id);
-      sortedData = sortByField([...filteredData, item], 'id');
+      const filteredData = storageData.filter(v => v.id !== newItem.id);
+      sortedData = sortByField([...filteredData, newItem], 'id');
     } else {
       newItem = {
         id: storageData.length,
         visited: false,
         zoom: defaultZoom,
         ...position,
-        ...item,
+        ...newItem,
       }
       sortedData = sortByField([...storageData, newItem], 'id')
     }
