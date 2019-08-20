@@ -32,7 +32,6 @@ const App = () => {
       setStorageData(mockData, 'data');
     }
     setData(data());
-    setSelectedItem(data()[0]);
   };
 
   const toggleItem = index => {

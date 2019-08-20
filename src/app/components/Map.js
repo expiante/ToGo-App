@@ -5,7 +5,7 @@ import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-map
 import { mapConfig } from 'config/consts';
 
 const { checked, unchecked } = mapConfig.marker.icons;
-const defaultZoom = 12;
+const { defaultZoom } = mapConfig;
 
 const Map = memo(({ data, position, onFormSubmit, onSelectNewPosition }) => {
   const [showOverlay, setShowOverlay] = useState(false);
@@ -39,7 +39,7 @@ const Map = memo(({ data, position, onFormSubmit, onSelectNewPosition }) => {
       )}
       <Marker
         position={position}
-        onClick={() => setShowOverlay(!showOverlay)}
+        onClick={() => setShowOverlay(true)}
         icon={{ url: data && data.visited ? checked : unchecked }}
       />
     </GoogleMap>

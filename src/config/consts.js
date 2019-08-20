@@ -5,9 +5,16 @@ export const mapConfig = {
   url: 'https://maps.googleapis.com/maps/api/js',
   key: 'AIzaSyBV1Lb6yFD656kORCtqHrtNnhaFNHmxxbg',
   ver: '3.exp',
-  libs: ['geometry', 'drawing', 'places'],
-  defaultPosition: { lat: 40.181169, lng: 44.5133 }, // Yerevan
-  defaultZoom: 12,
+  libs: [
+    'geometry',
+    'drawing',
+    'places',
+  ],
+  defaultPosition: {
+    lat: 40.374472,
+    lng: -3.711706,
+  }, // Spain
+  defaultZoom: 2,
   config: {
     disableDefaultUI: false,
     draggable: true,
