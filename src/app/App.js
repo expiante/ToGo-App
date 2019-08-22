@@ -105,7 +105,7 @@ const App = () => {
   return (
     <section className='container-fluid'>
       <div className='row'>
-        <div className='col-8 p-0'>
+        <div className='col-8 p-0 map-container'>
           {mapUrl && (
             <Map
               data={data}
