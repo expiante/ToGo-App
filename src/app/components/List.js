@@ -1,7 +1,12 @@
 import React from 'react';
 import { Switch } from 'shared/components';
 
-const List = ({ rows = [], onItemClick, onToggleItem, onRemoveItem }) => (
+const List = ({
+  rows = [],
+  onItemClick,
+  onToggleItem,
+  onRemoveItem
+}) => (
   <table className={`table ${rows.length ? 'table-hover' : ''} mb-0`}>
     <thead>
       <tr>

@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Input, Button } from 'shared/components';
+import { Input, Select, Button } from 'shared/components';
+import { getEnumArrFrom } from 'shared/utils/helper';
 import { mapConfig } from 'config/consts';
 
-const zoomButtonsArr = Array(12).fill(1);
+const { defaultZoom } = mapConfig;
+const zoomButtonsArr = getEnumArrFrom(22);
 
 const PopupForm = ({ location, onSubmit }) => {
-  const [text, setText] = useState('');
-  const [zoom, setZoom] = useState(mapConfig.defaultZoom);
+  const [text, setText] = useState(location ? location.text : '');
+  const [zoom, setZoom] = useState(location ? location.zoom : '');
   const inputField = useRef();
 
   const initializeOverlayData = () => {
@@ -19,6 +21,7 @@ const PopupForm = ({ location, onSubmit }) => {
   const handleFormSubmission = e => {
     e.preventDefault();
     const modifiedData = location ? { ...location, text, zoom } : { text, zoom };
+    modifiedData.zoom = Number(modifiedData.zoom || defaultZoom);
     onSubmit(modifiedData);
   };
 
@@ -29,28 +32,24 @@ const PopupForm = ({ location, onSubmit }) => {
 
   return (
     <form onSubmit={handleFormSubmission}>
-      <div className='mb-3'>
-        <Input
-          value={text}
-          onChange={e => setText(e.target.value)}
-          reference={inputField}
-        />
-      </div>
-      <p className='card-text'>
-        Select zoom factor.
-      </p>
-      <div className='btn-group d-flex mb-4' role='group' aria-label='First group'>
-        {zoomButtonsArr.map((v, k) => (
-          <Button
-            classes={`btn-sm btn-${zoom === k + 1 ? 'primary' : 'outline-primary'}`}
-            value={k + 1}
-            onClick={setZoom}
-          />
-        ))}
-      </div>
-      <button type='submit' className={`btn btn-${location ? 'info' : 'primary'}`}>
-        {location ? 'Update' : 'Save'}
-      </button>
+      <Input
+        value={text}
+        classes='mb-3'
+        onChange={setText}
+        reference={inputField}
+      />
+      <p className='card-text'>Select zoom factor.</p>
+      <Select
+        value={zoom}
+        classes='mb-3'
+        items={zoomButtonsArr}
+        onChange={setZoom}
+      />
+      <Button
+        type='submit'
+        classes={`btn-${location ? 'info' : 'primary'}`}
+        value={location ? 'Update' : 'Save'}
+      />
     </form>
   );
 };

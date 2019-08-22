@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { sortByField, duplicate, filterById } from 'shared/utils/helper';
+import { sortByField, duplicate, filterById, filterBy } from 'shared/utils/helper';
 import { Input } from 'shared/components';
 import { Map, List } from './components';
-import { getStorageData, setStorageData, updateStorageData, removeStorageData } from './actions';
+import {
+  getStorageData,
+  setStorageData,
+  updateStorageData,
+  removeStorageData
+} from './actions';
 import { mapConfig } from 'config/consts';
 import { mockData } from 'config/consts';
 
@@ -16,7 +21,6 @@ const App = () => {
   const [search, setSearchText] = useState('');
   const [position, setPosition] = useState(defaultPosition);
 
-  // Initializations
   const initializeView = () => {
     initializeMap();
     initializePageData();
@@ -36,13 +40,28 @@ const App = () => {
     setData(data());
   };
 
-  // CRUD Actions
   const toggleItem = index => {
     const newData = duplicate(data);
     const item = newData[index];
     item.visited = !item.visited;
     updateStorageData(item);
     setData(newData);
+  };
+
+  const createOrUpdateItem = item => {
+    const storageData = getStorageData('data');
+    if (location) {
+      const filteredData = storageData.filter(v => v.id !== item.id);
+      setStorageData(sortByField([...filteredData, item], 'id'))
+    } else {
+      setStorageData(sortByField([...storageData, {
+        ...position,
+        ...item,
+        id: storageData.length + 1,
+        visited: false,
+      }], 'id'))
+    }
+    filterData();
   };
 
   const removeItem = item => {
@@ -57,35 +76,7 @@ const App = () => {
     setData(filteredData);
   };
 
-  const createOrUpdateItem = item => {
-    console.log('item', item);
-    const storageData = getStorageData('data');
-    let sortedData = [];
-    let newItem = item;
-    if (location) {
-      const filteredData = storageData.filter(v => v.id !== newItem.id);
-      sortedData = sortByField([...filteredData, newItem], 'id');
-    } else {
-      newItem = {
-        id: storageData.length + 1,
-        visited: false,
-        ...position,
-        ...newItem,
-      }
-      sortedData = sortByField([...storageData, newItem], 'id')
-    }
-    setStorageData(sortedData);
-    filterData();
-  };
-
-  // Functions
-  const filterData = () => {
-    let storageData = getStorageData('data');
-    let filteredData = storageData.filter(item =>
-      item.text.replace(' ', '').match(new RegExp(search, 'gi')),
-    );
-    setData(filteredData);
-  };
+  const filterData = () => setData(filterBy(getStorageData('data'), search));
 
   const managePosition = () => {
     let pos = location ? { lat: location.lat, lng: location.lng } : defaultPosition;
@@ -97,7 +88,6 @@ const App = () => {
     setLocation(location)
   };
 
-  // Effects
   useEffect(initializeView, []);
   useEffect(managePosition, [location]);
   useEffect(filterData, [search]);
@@ -130,11 +120,9 @@ const App = () => {
             <div className='card-body border-0 vh-100 d-flex flex-fill flex-column'>
               <div>
                 <div className='input-group mb-3'>
-                  <Input placeholder='Search...' onChange={e => setSearchText(e.target.value)} />
+                  <Input placeholder='Search...' onChange={setSearchText} />
                 </div>
-                {location && (
-                  <b className='text-info mb-3 d-inline-block'>{location.text}</b>
-                )}
+                {location && <b className='text-info mb-3 d-inline-block'>{location.text}</b>}
               </div>
               <div className='flex-fill overflow-auto'>
                 <List

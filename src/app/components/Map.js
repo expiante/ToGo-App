@@ -4,7 +4,11 @@ import { OverlayPopup } from '.';
 import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
 import { mapConfig } from 'config/consts';
 
-const { checkedMark, uncheckedMark, newMark } = mapConfig.marker.icons;
+const {
+  checkedMark,
+  uncheckedMark,
+  newMark
+} = mapConfig.marker.icons;
 
 const Map = ({
   data = [],
@@ -17,11 +21,6 @@ const Map = ({
 }) => {
   const [showOverlay, setShowOverlay] = useState(false);
   const popupOverlay = useRef(null);
-
-  const selectLocation = (item) => {
-    setShowOverlay(true);
-    onSelectExistingLocation(item);
-  }
 
   const setNewLocation = e => {
     if (popupOverlay.current) return;
@@ -49,12 +48,15 @@ const Map = ({
           position={position}
         />
       )}
-      {data.length && data.map((v, index) =>
+      {data.length && data.map((item, index) =>
         <Marker
-          key={`${v.id}-${index}`}
-          position={{ lat: v.lat, lng: v.lng }}
-          onClick={() => selectLocation(v)}
-          icon={{ url: v.visited ? checkedMark : uncheckedMark }}
+          key={`${item.id}-${index}`}
+          position={{ lat: item.lat, lng: item.lng }}
+          onClick={() => {
+            onSelectExistingLocation(item);
+            setShowOverlay(true);
+          }}
+          icon={{ url: item.visited ? checkedMark : uncheckedMark }}
         />
       )}
       {position && !location &&

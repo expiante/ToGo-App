@@ -2,14 +2,14 @@ import React from 'react';
 
 const Button = ({
   type = 'button',
-  classes = '',
+  classes = 'btn-primary',
   value,
   onClick
 }) => (
   <button
     type={type}
     className={`btn ${classes}`}
-    onClick={() => onClick(value)}
+    onClick={onClick}
   >
     {value}
   </button>

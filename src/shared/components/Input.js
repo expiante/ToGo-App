@@ -2,6 +2,7 @@ import React from 'react';
 
 const Input = ({
   type = 'text',
+  classes = '',
   name,
   value,
   reference,
@@ -15,11 +16,11 @@ const Input = ({
     value={value}
     name={name}
     ref={reference}
-    className='form-control'
+    className={`form-control ${classes}`}
     aria-label='Sizing example input'
     aria-describedby='inputGroup-sizing-default'
     placeholder={placeholder || ''}
-    onChange={onChange}
+    onChange={e => onChange(e.target.value)}
   />
 )
 

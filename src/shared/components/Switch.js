@@ -1,6 +1,11 @@
 import React from 'react';
 
-const Switch = ({ checked, onToggle, rel, labelText }) => (
+const Switch = ({
+  checked,
+  rel,
+  labelText,
+  onToggle
+}) => (
   <div
     className='custom-control custom-switch'
     role='presentation'
