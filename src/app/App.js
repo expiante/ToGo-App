@@ -10,11 +10,13 @@ const { defaultPosition, defaultZoom } = mapConfig;
 
 const App = () => {
   const [data, setData] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [location, setLocation] = useState(null);
   const [mapUrl, setMapUrl] = useState('');
+  const [zoom, setZoom] = useState(defaultZoom);
   const [search, setSearchText] = useState('');
-  const [position, setPosition] = useState(() => duplicate(defaultPosition));
+  const [position, setPosition] = useState(defaultPosition);
 
+  // Initializations
   const initializeView = () => {
     initializeMap();
     initializePageData();
@@ -34,21 +36,21 @@ const App = () => {
     setData(data());
   };
 
+  // CRUD Actions
   const toggleItem = index => {
     const newData = duplicate(data);
     const item = newData[index];
     item.visited = !item.visited;
     updateStorageData(item);
-    setSelectedItem(item);
     setData(newData);
   };
 
   const removeItem = item => {
     const filteredData = filterById(duplicate(data), item);
-    if (selectedItem) {
-      const selectedItemInList = filteredData.find(v => v.id === selectedItem.id);
+    if (location) {
+      const selectedItemInList = filteredData.find(v => v.id === location.id);
       if (!selectedItemInList) {
-        setSelectedItem(filteredData[0]);
+        setLocation(filteredData[0]);
       }
     }
     removeStorageData(item);
@@ -56,27 +58,27 @@ const App = () => {
   };
 
   const createOrUpdateItem = item => {
+    console.log('item', item);
     const storageData = getStorageData('data');
     let sortedData = [];
     let newItem = item;
-    if (selectedItem) {
+    if (location) {
       const filteredData = storageData.filter(v => v.id !== newItem.id);
       sortedData = sortByField([...filteredData, newItem], 'id');
     } else {
       newItem = {
-        id: storageData.length,
+        id: storageData.length + 1,
         visited: false,
-        zoom: defaultZoom,
         ...position,
         ...newItem,
       }
       sortedData = sortByField([...storageData, newItem], 'id')
     }
-    setSelectedItem(newItem);
     setStorageData(sortedData);
     filterData();
   };
 
+  // Functions
   const filterData = () => {
     let storageData = getStorageData('data');
     let filteredData = storageData.filter(item =>
@@ -86,12 +88,18 @@ const App = () => {
   };
 
   const managePosition = () => {
-    let pos = selectedItem ? { lat: selectedItem.lat, lng: selectedItem.lng } : defaultPosition;
+    let pos = location ? { lat: location.lat, lng: location.lng } : defaultPosition;
     setPosition(pos);
   };
 
+  const changeLocation = (location) => {
+    setZoom(location.zoom)
+    setLocation(location)
+  };
+
+  // Effects
   useEffect(initializeView, []);
-  useEffect(managePosition, [selectedItem]);
+  useEffect(managePosition, [location]);
   useEffect(filterData, [search]);
 
   return (
@@ -100,15 +108,18 @@ const App = () => {
         <div className='col-8 p-0'>
           {mapUrl && (
             <Map
-              data={selectedItem}
+              data={data}
+              location={location}
+              zoom={zoom}
               googleMapURL={mapUrl}
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `100vh` }} />}
               mapElement={<div style={{ height: `100%` }} />}
-              onFormSubmit={createOrUpdateItem}
               position={position}
-              onSelectNewPosition={newPos => {
-                setSelectedItem(null);
+              onFormSubmit={createOrUpdateItem}
+              onSelectExistingLocation={setLocation}
+              onSelectNewLocation={newPos => {
+                setLocation(null);
                 setPosition(newPos);
               }}
             />
@@ -121,14 +132,14 @@ const App = () => {
                 <div className='input-group mb-3'>
                   <Input placeholder='Search...' onChange={e => setSearchText(e.target.value)} />
                 </div>
-                {selectedItem && (
-                  <b className='text-info mb-3 d-inline-block'>{selectedItem.text}</b>
+                {location && (
+                  <b className='text-info mb-3 d-inline-block'>{location.text}</b>
                 )}
               </div>
               <div className='flex-fill overflow-auto'>
                 <List
                   rows={data}
-                  onItemClick={setSelectedItem}
+                  onItemClick={changeLocation}
                   onRemoveItem={removeItem}
                   onToggleItem={toggleItem}
                 />

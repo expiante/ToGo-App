@@ -4,18 +4,30 @@ import { OverlayPopup } from '.';
 import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
 import { mapConfig } from 'config/consts';
 
-const { checked, unchecked } = mapConfig.marker.icons;
-const { defaultZoom } = mapConfig;
+const { checkedMark, uncheckedMark, newMark } = mapConfig.marker.icons;
 
-const Map = memo(({ data, position, onFormSubmit, onSelectNewPosition }) => {
+const Map = ({
+  data = [],
+  location,
+  position,
+  zoom,
+  onFormSubmit,
+  onSelectNewLocation,
+  onSelectExistingLocation
+}) => {
   const [showOverlay, setShowOverlay] = useState(false);
   const popupOverlay = useRef(null);
-  const zoom = data ? data.zoom : defaultZoom;
+
+  const selectLocation = (item) => {
+    setShowOverlay(true);
+    onSelectExistingLocation(item);
+  }
 
   const setNewLocation = e => {
     if (popupOverlay.current) return;
-    const newPos = { lat: e.latLng.lat(), lng: e.latLng.lng() };
-    onSelectNewPosition(newPos);
+    const { lat, lng } = e.latLng;
+    const newPos = { lat: lat(), lng: lng() };
+    onSelectNewLocation(newPos);
     setShowOverlay(false);
   };
 
@@ -30,23 +42,34 @@ const Map = memo(({ data, position, onFormSubmit, onSelectNewPosition }) => {
     >
       {showOverlay && (
         <OverlayPopup
-          data={data}
+          location={location}
           onClose={() => setShowOverlay(false)}
           onSubmit={onFormSubmit}
           referene={popupOverlay}
           position={position}
         />
       )}
-      <Marker
-        position={position}
-        onClick={() => setShowOverlay(true)}
-        icon={{ url: data && data.visited ? checked : unchecked }}
-      />
+      {data.length && data.map((v, index) =>
+        <Marker
+          key={`${v.id}-${index}`}
+          position={{ lat: v.lat, lng: v.lng }}
+          onClick={() => selectLocation(v)}
+          icon={{ url: v.visited ? checkedMark : uncheckedMark }}
+        />
+      )}
+      {position && !location &&
+        <Marker
+          position={position}
+          onClick={() => setShowOverlay(true)}
+          icon={{ url: newMark }}
+        />
+      }
     </GoogleMap>
   );
-});
+};
 
 export default compose(
   withScriptjs,
   withGoogleMap,
+  memo
 )(Map);

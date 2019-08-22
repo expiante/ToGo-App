@@ -1,4 +1,5 @@
 import Input from './Input';
+import Button from './Button';
 import Switch from './Switch';
 
-export { Input, Switch };
+export { Input, Button, Switch };

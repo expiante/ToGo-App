@@ -2,7 +2,7 @@ import React from 'react';
 import { OverlayView } from 'react-google-maps';
 import { PopupForm } from '.';
 
-const OverlayPopup = ({ data, position, onClose, onSubmit, referene }) => {
+const OverlayPopup = ({ location, position, onClose, onSubmit, referene }) => {
   const submitChanges = data => {
     onSubmit(data);
     onClose();
@@ -25,7 +25,7 @@ const OverlayPopup = ({ data, position, onClose, onSubmit, referene }) => {
         <div className='card-body'>
           <div className='d-flex justify-content-between align-items-start mb-3'>
             <h5 className='card-title mb-0 mr-3'>
-              {data
+              {location
                 ? 'Update the information of this place'
                 : 'Write an information about this place'}
             </h5>
@@ -37,7 +37,7 @@ const OverlayPopup = ({ data, position, onClose, onSubmit, referene }) => {
           <p className='card-text'>
             Type some information, that you want to have about this location.
           </p>
-          <PopupForm onSubmit={submitChanges} data={data} />
+          <PopupForm onSubmit={submitChanges} location={location} />
         </div>
       </div>
     </OverlayView>
