@@ -20,7 +20,7 @@ body {
 .map-container {
   .gm-style > div:first-child {
     img {
-      filter: brightness(2.0);
+      filter: contrast(1.2) brightness(1.8);
     }
   }
 }
