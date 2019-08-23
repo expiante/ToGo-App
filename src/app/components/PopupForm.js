@@ -32,19 +32,9 @@ const PopupForm = ({ location, onSubmit }) => {
 
   return (
     <form onSubmit={handleFormSubmission}>
-      <Input
-        value={text}
-        classes='mb-3'
-        onChange={setText}
-        reference={inputField}
-      />
+      <Input value={text} classes='mb-3' onChange={setText} reference={inputField} />
       <p className='card-text'>Select zoom factor.</p>
-      <Select
-        value={zoom}
-        classes='mb-3'
-        items={zoomButtonsArr}
-        onChange={setZoom}
-      />
+      <Select value={zoom} classes='mb-3' items={zoomButtonsArr} onChange={setZoom} />
       <Button
         type='submit'
         classes={`btn-${location ? 'info' : 'primary'}`}

@@ -22,6 +22,6 @@ const Input = ({
     placeholder={placeholder || ''}
     onChange={e => onChange(e.target.value)}
   />
-)
+);
 
 export default Input;

@@ -4,11 +4,7 @@ import { OverlayPopup } from '.';
 import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
 import { mapConfig } from 'config/consts';
 
-const {
-  checkedMark,
-  uncheckedMark,
-  newMark
-} = mapConfig.marker.icons;
+const { checkedMark, uncheckedMark, newMark } = mapConfig.marker.icons;
 
 const Map = ({
   data = [],
@@ -17,7 +13,7 @@ const Map = ({
   zoom,
   onFormSubmit,
   onSelectNewLocation,
-  onSelectExistingLocation
+  onSelectExistingLocation,
 }) => {
   const [showOverlay, setShowOverlay] = useState(false);
   const popupOverlay = useRef(null);
@@ -48,24 +44,21 @@ const Map = ({
           position={position}
         />
       )}
-      {data.length && data.map((item, index) =>
-        <Marker
-          key={`${item.id}-${index}`}
-          position={{ lat: item.lat, lng: item.lng }}
-          onClick={() => {
-            onSelectExistingLocation(item);
-            setShowOverlay(true);
-          }}
-          icon={{ url: item.visited ? checkedMark : uncheckedMark }}
-        />
+      {data.length &&
+        data.map((item, index) => (
+          <Marker
+            key={`${item.id}-${index}`}
+            position={{ lat: item.lat, lng: item.lng }}
+            onClick={() => {
+              onSelectExistingLocation(item);
+              setShowOverlay(true);
+            }}
+            icon={{ url: item.visited ? checkedMark : uncheckedMark }}
+          />
+        ))}
+      {position && !location && (
+        <Marker position={position} onClick={() => setShowOverlay(true)} icon={{ url: newMark }} />
       )}
-      {position && !location &&
-        <Marker
-          position={position}
-          onClick={() => setShowOverlay(true)}
-          icon={{ url: newMark }}
-        />
-      }
     </GoogleMap>
   );
 };
@@ -73,5 +66,5 @@ const Map = ({
 export default compose(
   withScriptjs,
   withGoogleMap,
-  memo
+  memo,
 )(Map);

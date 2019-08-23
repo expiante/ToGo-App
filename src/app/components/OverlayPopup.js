@@ -2,13 +2,7 @@ import React from 'react';
 import { OverlayView } from 'react-google-maps';
 import { PopupForm } from './';
 
-const OverlayPopup = ({
-  location,
-  position,
-  onClose,
-  onSubmit,
-  referene
-}) => {
+const OverlayPopup = ({ location, position, onClose, onSubmit, referene }) => {
   const submitChanges = data => {
     onSubmit(data);
     onClose();

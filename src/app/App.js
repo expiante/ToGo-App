@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { sortBy, duplicate, filterById, filterBy } from 'shared/utils/helper';
 import { Input } from 'shared/components';
 import { Map, List } from './components';
-import {
-  getStorageData,
-  setStorageData,
-  updateStorageData,
-  removeStorageData
-} from './actions';
+import { getStorageData, setStorageData, updateStorageData, removeStorageData } from './actions';
 import { mapConfig } from 'config/consts';
 import { mockData } from 'config/consts';
 
 const { defaultPosition, defaultZoom } = mapConfig;
+const mapElements = {
+  loadingElement: <div style={{ height: `100%` }} />,
+  containerElement: <div style={{ height: `100vh` }} />,
+  mapElement: <div style={{ height: `100%` }} />,
+};
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -33,48 +33,55 @@ const App = () => {
   };
 
   const initializePageData = () => {
-    const data = () => getStorageData('data')
+    const data = () => getStorageData('data');
     if (!data()) {
       setStorageData(mockData, 'data');
     }
     setData(data());
   };
 
-  const toggleItem = index => {
-    const newData = duplicate(data);
-    const item = newData[index];
-    item.visited = !item.visited;
-    updateStorageData(item);
-    setData(newData);
-  };
+  const toggleItem = useCallback(
+    index => {
+      const newData = duplicate(data);
+      const item = newData[index];
+      item.visited = !item.visited;
+      updateStorageData(item);
+      setData(newData);
+    },
+    [data],
+  );
 
   const createOrUpdateItem = item => {
     const storageData = getStorageData('data');
     if (location) {
       const filteredData = storageData.filter(v => v.id !== item.id);
-      setStorageData(sortBy([...filteredData, item], 'id'))
+      setStorageData(sortBy([...filteredData, item], 'id'));
     } else {
-      setStorageData(sortBy([...storageData, {
+      const newItem = {
         ...position,
         ...item,
         id: storageData.length + 1,
         visited: false,
-      }], 'id'))
+      };
+      setStorageData(sortBy([...storageData, newItem], 'id'));
     }
     filterData();
   };
 
-  const removeItem = item => {
-    const filteredData = filterById(duplicate(data), item);
-    if (location) {
-      const selectedItemInList = filteredData.find(v => v.id === location.id);
-      if (!selectedItemInList) {
-        setLocation(filteredData[0]);
+  const removeItem = useCallback(
+    item => {
+      const filteredData = filterById(duplicate(data), item);
+      if (location) {
+        const selectedItemInList = filteredData.find(v => v.id === location.id);
+        if (!selectedItemInList) {
+          setLocation(filteredData[0]);
+        }
       }
-    }
-    removeStorageData(item);
-    setData(filteredData);
-  };
+      removeStorageData(item);
+      setData(filteredData);
+    },
+    [data, location],
+  );
 
   const filterData = () => setData(filterBy(getStorageData('data'), search));
 
@@ -83,10 +90,10 @@ const App = () => {
     setPosition(pos);
   };
 
-  const changeLocation = (location) => {
-    setZoom(location.zoom)
-    setLocation(location)
-  };
+  const changeLocation = useCallback(location => {
+    setZoom(location.zoom);
+    setLocation(location);
+  }, []);
 
   useEffect(initializeView, []);
   useEffect(managePosition, [location]);
@@ -102,9 +109,6 @@ const App = () => {
               location={location}
               zoom={zoom}
               googleMapURL={mapUrl}
-              loadingElement={<div style={{ height: `100%` }} />}
-              containerElement={<div style={{ height: `100vh` }} />}
-              mapElement={<div style={{ height: `100%` }} />}
               position={position}
               onFormSubmit={createOrUpdateItem}
               onSelectExistingLocation={setLocation}
@@ -112,6 +116,7 @@ const App = () => {
                 setLocation(null);
                 setPosition(newPos);
               }}
+              {...mapElements}
             />
           )}
         </div>
