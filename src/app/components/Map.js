@@ -1,7 +1,7 @@
 import React, { useState, useRef, memo } from 'react';
 import { compose } from 'recompose';
-import { OverlayPopup } from '.';
-import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
+import { OverlayPopup, MapMarker } from './';
+import { GoogleMap, withGoogleMap, withScriptjs } from 'react-google-maps';
 import { mapConfig } from 'config/consts';
 
 const { checkedMark, uncheckedMark, newMark } = mapConfig.marker.icons;
@@ -45,19 +45,23 @@ const Map = ({
         />
       )}
       {data.length &&
-        data.map((item, index) => (
-          <Marker
-            key={`${item.id}-${index}`}
+        data.map(item => (
+          <MapMarker
+            key={item.id}
             position={{ lat: item.lat, lng: item.lng }}
+            icon={{ url: item.visited ? checkedMark : uncheckedMark }}
             onClick={() => {
               onSelectExistingLocation(item);
               setShowOverlay(true);
             }}
-            icon={{ url: item.visited ? checkedMark : uncheckedMark }}
           />
         ))}
       {position && !location && (
-        <Marker position={position} onClick={() => setShowOverlay(true)} icon={{ url: newMark }} />
+        <MapMarker
+          position={position}
+          icon={{ url: newMark }}
+          onClick={() => setShowOverlay(true)}
+        />
       )}
     </GoogleMap>
   );

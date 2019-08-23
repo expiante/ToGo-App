@@ -1,16 +1,7 @@
-import React, { useRef, memo } from 'react';
+import React, { memo } from 'react';
 import { Switch, Button } from 'shared/components';
 
 const List = ({ rows = [], onItemClick, onToggleItem, onRemoveItem }) => {
-  const button = useRef();
-  const toggle = useRef();
-
-  const handleLocationSelection = (target, item) => {
-    const buttonClick = target.isEqualNode(button.current);
-    const toggleClick = target.isEqualNode(toggle.current);
-    if (!buttonClick && !toggleClick) onItemClick(item);
-  };
-
   return (
     <table className={`table ${rows.length ? 'table-hover' : ''} mb-0`}>
       <thead>
@@ -23,22 +14,26 @@ const List = ({ rows = [], onItemClick, onToggleItem, onRemoveItem }) => {
       <tbody>
         {rows.length ? (
           rows.map((item, index) => (
-            <tr key={`${item.id}-${index}`} onClick={e => handleLocationSelection(e.target, item)}>
+            <tr key={`${item.id}-${index}`} onClick={e => onItemClick(item)}>
               <th>
                 <Switch
                   checked={item.visited}
-                  reference={toggle}
                   rel={`item-${index}`}
-                  onToggle={() => onToggleItem(index)}
+                  onToggle={e => {
+                    e.stopPropagation();
+                    onToggleItem(index);
+                  }}
                 />
               </th>
               <td>{item.text}</td>
               <td>
                 <Button
                   value='Remove'
-                  reference={button}
                   classes='btn-secondary btn-sm badge'
-                  onClick={() => onRemoveItem(item)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    onRemoveItem(item);
+                  }}
                 />
               </td>
             </tr>
