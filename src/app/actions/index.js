@@ -1,4 +1,4 @@
-import { filterById, sortByField } from 'shared/utils/helper';
+import { filterById, sortBy } from 'shared/utils/helper';
 
 export const getStorageData = (field = 'data') => {
   return JSON.parse(localStorage.getItem(field));
@@ -10,7 +10,7 @@ export const setStorageData = (data, field = 'data') => {
 
 export const updateStorageData = (item) => {
   const filteredData = filterById(getStorageData('data'), item)
-  const sortedData = sortByField([...filteredData, item], 'id');
+  const sortedData = sortBy([...filteredData, item], 'id');
   setStorageData(sortedData);
 }
 

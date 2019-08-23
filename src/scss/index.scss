@@ -18,10 +18,8 @@ body {
 }
 
 .map-container {
-  .gm-style > div:first-child {
-    img {
-      filter: contrast(1.0) brightness(2.0);
-    }
+  .gm-style > div:first-child img {
+    filter: contrast(100%) brightness(200%);
   }
 }
 

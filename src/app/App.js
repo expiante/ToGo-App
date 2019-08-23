@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { sortByField, duplicate, filterById, filterBy } from 'shared/utils/helper';
+import { sortBy, duplicate, filterById, filterBy } from 'shared/utils/helper';
 import { Input } from 'shared/components';
 import { Map, List } from './components';
 import {
@@ -52,9 +52,9 @@ const App = () => {
     const storageData = getStorageData('data');
     if (location) {
       const filteredData = storageData.filter(v => v.id !== item.id);
-      setStorageData(sortByField([...filteredData, item], 'id'))
+      setStorageData(sortBy([...filteredData, item], 'id'))
     } else {
-      setStorageData(sortByField([...storageData, {
+      setStorageData(sortBy([...storageData, {
         ...position,
         ...item,
         id: storageData.length + 1,
