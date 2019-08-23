@@ -33,11 +33,8 @@ const App = () => {
   };
 
   const initializePageData = () => {
-    const data = () => getStorageData('data');
-    if (!data()) {
-      setStorageData(mockData, 'data');
-    }
-    setData(data());
+    if (!getStorageData('data')) setStorageData(mockData, 'data');
+    setData(getStorageData('data'));
   };
 
   const toggleItem = useCallback(
