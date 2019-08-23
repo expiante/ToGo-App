@@ -32,8 +32,8 @@ const Map = ({
       zoom={zoom}
       defaultCenter={position}
       center={position}
-      onClick={setNewLocation}
       defaultOptions={{ ...mapConfig.config }}
+      onClick={setNewLocation}
     >
       {showOverlay && (
         <OverlayPopup
