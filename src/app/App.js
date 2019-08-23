@@ -125,7 +125,7 @@ const App = () => {
             <div className='card-body border-0 vh-100 d-flex flex-fill flex-column'>
               <div>
                 <div className='input-group mb-3'>
-                  <Input placeholder='Search...' onChange={setSearchText} />
+                  <Input type='search' placeholder='Search...' onChange={setSearchText} />
                 </div>
                 {location && <b className='text-info mb-3 d-inline-block'>{location.text}</b>}
               </div>
