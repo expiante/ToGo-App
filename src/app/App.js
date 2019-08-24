@@ -3,10 +3,9 @@ import { sortBy, duplicate, filterById, filterBy } from 'shared/utils/helper';
 import { Input } from 'shared/components';
 import { Map, List } from './components';
 import { getStorageData, setStorageData, updateStorageData, removeStorageData } from './actions';
-import { mapConfig } from 'config/consts';
-import { mockData } from 'config/consts';
+import { mapConfig, mockData } from 'config/consts';
 
-const { defaultPosition, defaultZoom } = mapConfig;
+const { url, key, ver, libs, defaultPosition, defaultZoom } = mapConfig;
 const mapElements = {
   loadingElement: <div style={{ height: `100%` }} />,
   containerElement: <div style={{ height: `100vh` }} />,
@@ -27,7 +26,6 @@ const App = () => {
   };
 
   const initializeMap = () => {
-    const { url, key, ver, libs } = mapConfig;
     const fullURL = `${url}?key=${key}&v=${ver}&libraries=${libs.join(',')}`;
     setMapUrl(fullURL);
   };
