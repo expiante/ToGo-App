@@ -17,6 +17,23 @@ const {
 const { SUCCESS } = MSG_TYPE;
 const { url, key, ver, libs, defaultPosition } = mapConfig;
 
+const initializeMap = dispatch => {
+  const fullURL = `${url}?key=${key}&v=${ver}&libraries=${libs.join(',')}`;
+  dispatch(fullURL);
+};
+
+const initializeData = dispatch => {
+  if (!getStorageData('data')) setStorageData(mockData, 'data');
+  dispatch(getStorageData('data'));
+};
+
+export const initializeView = (mapDispatcher, dataDispatcher) => {
+  initializeMap(mapDispatcher);
+  initializeData(dataDispatcher);
+};
+
+export const filterData = (dispatch, value) => dispatch(filterBy(getStorageData('data'), value));
+
 export const createOrUpdateStorageItem = (
   item,
   location,
@@ -41,23 +58,6 @@ export const createOrUpdateStorageItem = (
   enqueue(location ? LOCATION_UPDATE_DONE : LOCATION_CREATE_DONE, SUCCESS);
   filterData(dispatch, searchValue);
 };
-
-const initializeMap = dispatch => {
-  const fullURL = `${url}?key=${key}&v=${ver}&libraries=${libs.join(',')}`;
-  dispatch(fullURL);
-};
-
-const initializeData = dispatch => {
-  if (!getStorageData('data')) setStorageData(mockData, 'data');
-  dispatch(getStorageData('data'));
-};
-
-export const initializeView = (mapDispatcher, dataDispatcher) => {
-  initializeMap(mapDispatcher);
-  initializeData(dataDispatcher);
-};
-
-export const filterData = (dispatch, value) => dispatch(filterBy(getStorageData('data'), value));
 
 export const toggleStorageItem = (index, data, enqueue, dispatch) => {
   const newData = duplicate(data);
