@@ -1,18 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { sortBy, duplicate, filterById, filterBy } from 'shared/utils/helper';
+import { withSnackbar } from 'notistack';
 import { Input } from 'shared/components';
 import { Map, List } from './components';
-import { getStorageData, setStorageData, updateStorageData, removeStorageData } from './actions';
-import { mapConfig, mockData } from 'config/consts';
+import {
+  createOrUpdateStorageItem,
+  toggleStorageItem,
+  removeStorageItem,
+  filterData,
+  managePosition,
+  initializeView,
+} from './actions';
+import { mapConfig } from 'config/consts';
 
-const { url, key, ver, libs, defaultPosition, defaultZoom } = mapConfig;
+const { defaultPosition, defaultZoom } = mapConfig;
 const mapElements = {
   loadingElement: <div style={{ height: `100%` }} />,
   containerElement: <div style={{ height: `100vh` }} />,
   mapElement: <div style={{ height: `100%` }} />,
 };
 
-const App = () => {
+const App = ({ enqueueSnackbar }) => {
   const [data, setData] = useState([]);
   const [location, setLocation] = useState(null);
   const [mapUrl, setMapUrl] = useState('');
@@ -20,79 +27,28 @@ const App = () => {
   const [search, setSearchText] = useState('');
   const [position, setPosition] = useState(defaultPosition);
 
-  const initializeView = () => {
-    initializeMap();
-    initializePageData();
-  };
-
-  const initializeMap = () => {
-    const fullURL = `${url}?key=${key}&v=${ver}&libraries=${libs.join(',')}`;
-    setMapUrl(fullURL);
-  };
-
-  const initializePageData = () => {
-    if (!getStorageData('data')) setStorageData(mockData, 'data');
-    setData(getStorageData('data'));
+  const createOrUpdateItem = item => {
+    createOrUpdateStorageItem(item, location, position, search, enqueueSnackbar, setData);
   };
 
   const toggleItem = useCallback(
-    index => {
-      const newData = duplicate(data);
-      const item = newData[index];
-      item.visited = !item.visited;
-      updateStorageData(item);
-      setData(newData);
-    },
-    [data],
+    index => toggleStorageItem(index, data, enqueueSnackbar, setData),
+    [data, enqueueSnackbar],
   );
-
-  const createOrUpdateItem = item => {
-    const storageData = getStorageData('data');
-    if (location) {
-      const filteredData = storageData.filter(v => v.id !== item.id);
-      setStorageData(sortBy([...filteredData, item], 'id'));
-    } else {
-      const newItem = {
-        ...position,
-        ...item,
-        id: storageData.length + 1,
-        visited: false,
-      };
-      setStorageData(sortBy([...storageData, newItem], 'id'));
-    }
-    filterData();
-  };
 
   const removeItem = useCallback(
-    item => {
-      const filteredData = filterById(duplicate(data), item);
-      if (location) {
-        const selectedItemInList = filteredData.find(v => v.id === location.id);
-        if (!selectedItemInList) {
-          setLocation(filteredData[0]);
-        }
-      }
-      removeStorageData(item);
-      setData(filteredData);
-    },
-    [data, location],
+    item => removeStorageItem(item, data, location, enqueueSnackbar, setLocation, setData),
+    [data, enqueueSnackbar, location],
   );
-
-  const filterData = () => setData(filterBy(getStorageData('data'), search));
-
-  const managePosition = () => {
-    let pos = location ? { lat: location.lat, lng: location.lng } : defaultPosition;
-    setPosition(pos);
-  };
 
   const changeLocation = useCallback(location => {
     setZoom(location.zoom);
     setLocation(location);
   }, []);
 
-  useEffect(initializeView, []);
-  useEffect(managePosition, [location]);
-  useEffect(filterData, [search]);
+  useEffect(() => initializeView(setMapUrl, setData), []);
+  useEffect(() => managePosition(setPosition, location), [location]);
+  useEffect(() => filterData(setData, search), [search]);
 
   return (
     <section className='container-fluid'>
@@ -140,4 +96,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default withSnackbar(App);

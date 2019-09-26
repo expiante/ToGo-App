@@ -28,6 +28,24 @@ export const mapConfig = {
   },
 };
 
+export const MSG = {
+  LOCATION_CREATE_DONE: 'A New Location Were Successfully Created.',
+  LOCATION_CREATE_FAIL: 'Something went wrong.',
+  LOCATION_UPDATE_DONE: 'The Location Information Were Successfully Updated.',
+  LOCATION_UPDATE_FAIL: 'Something went wrong.',
+  LOCATION_REMOVE_DONE: 'The Location Were Successfully Removed.',
+  LOCATION_REMOVE_FAIL: 'Something went wrong.',
+  LOCATION_VISIT_ENABLED: 'Congratulations! You Visited This Place.',
+  LOCATION_VISIT_DISABLED: 'Sorry! You Did Not Visited This Place Yet...',
+};
+
+export const MSG_TYPE = {
+  SUCCESS: { variant: 'success' },
+  INFO: { variant: 'info' },
+  WARNING: { variant: 'warning' },
+  ERROR: { variant: 'error' },
+};
+
 export const mockData = [
   { id: 1, visited: true, text: 'I Want to Go Yerevan!', lat: 40.181169, lng: 44.5133, zoom: 12 },
   { id: 2, visited: false, text: 'Go to sevan', lat: 40.4048044, lng: 45.1958256, zoom: 12 },
